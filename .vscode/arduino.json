@@ -2,5 +2,6 @@
     "configuration": "cpu=atmega328",
     "board": "arduino:avr:nano",
     "programmer": "arduino:avrispmkii",
-    "sketch": "SolarTracker\\SolarTracker.ino"
+    "sketch": "SolarTracker\\SolarTracker.ino",
+    "port": "COM4"
 }
