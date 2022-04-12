@@ -3,6 +3,11 @@
  * April 4, 2022
  */
 
+/* Goals:
+ * - Display Clock and Solar tracker data (angle) at the same time 
+ * - Clean up code
+ */
+
 //  Headers to include
 #include <LiquidCrystal.h>
 #include <Servo.h>
@@ -18,6 +23,7 @@ int error = 5;
 int servopin = 10;
 int EncoderTracking = 0;
 int Lcd_Update = 0;
+bool printAngle = true;
 
 //  Software Timer for control 2 Hz
 unsigned long ControlTimer;
@@ -27,22 +33,18 @@ unsigned long ControlTimer;
 #define LightOff 500
 #define LightTolerance 25
 
-// Timer to control Clock, TxMorseCode, Led and Encoder.
+// Timer to control Clock and Encoder.
 #define CLOCK_TIME 1000
 #define DOT_TIME 50
 #define ENCODER_INTERVAL 250
 unsigned long ClkTimer, TxTimer, EncoderTimer;
 unsigned long INTERVAL = 1000;
-// setup code, ran once:
 
 //  Defines for LCD
-LiquidCrystal LcdDriver(A5, A4, 5, 6, 7, 8);
+LiquidCrystal lcd(A5, A4, 5, 6, 7, 8);
 
 //  Defines for Servo
 Servo myservo;
-
-//  Defines for LCD Display
-LiquidCrystal lcd(A5, A4, 5, 6, 7, 8);
 
 // Setup Program
 void setup()
@@ -73,12 +75,11 @@ void setup()
     EncoderTracking = encoderPosition;
 
     // Set initial time
-    CLK_Hours = 9;
-    CLK_Minutes = 58;
-    CLK_Seconds = 58;
+    CLK_Hours = 11;
+    CLK_Minutes = 59;
+    CLK_Seconds = 59;
 
     // Lcd and Serial
-    LcdDriver.begin(16, 2);
     Serial.begin(9600); // Serial Port on
 } // end of setup.
 
@@ -86,80 +87,111 @@ void setup()
 void loop()
 {
     int Total, MidPoint;
+
     if (millis() - ControlTimer >= CONTROL_INTERVAL) //  If specified interval has passed
     {
         // Read in light levels.
         Total = analogRead(sens1);
         MidPoint = analogRead(sens2);
         // Send results to display.
-        /*
-        lcd.clear();
-        lcd.print("Tot. ");
-        lcd.print(Total);
-        lcd.print("->");
-        lcd.print(5.0 * (float)Total / 1024.0, 3);
-        lcd.setCursor(0, 1);
-        lcd.print("Bal. ");
-        lcd.print(MidPoint);
-        lcd.print("->");
-        lcd.print(5.0 * (float)MidPoint / 1024.0, 3);
-        */
-        // Update timer.
-        ControlTimer += CONTROL_INTERVAL;
+        if (printAngle)
+        {
+            lcd.clear();
+            SendClock(); // Place time
+            lcd.setCursor(0, 1);
+            lcd.print("Angle:");
+            lcd.print(pos);
+            lcd.print((char)223); // Degrees Symbol
+        }
+
+        // Send position to serial port for debugging
+        Serial.print("Tot. ");
+        Serial.print(Total);
+        Serial.print("->");
+        Serial.println(5.0 * (float)Total / 1024.0, 3);
+        Serial.print("Bal. ");
+        Serial.print(MidPoint);
+        Serial.print("->");
+        Serial.println(5.0 * (float)MidPoint / 1024.0, 3);
+        
+
         // check if motion is needed.
         if (Total < LightOff)
+        {
             if (abs(Total - MidPoint) > LightTolerance)
             {
-                if (Total > 2 * MidPoint)
-                    pos += 3;
-                else
-                    pos -= 3;
+                if (Total > 2 * MidPoint){
+                    if (pos <= 177)
+                    {
+                        pos += 3;
+                    }
+                }
+                else{
+                    if (pos >= 3){
+                        pos -= 3;
+                    }
+                }
+                Serial.print("Servo Pos: ");
+                Serial.println(pos);
                 myservo.write(pos);
             } // end of position update.
-    }         // end of timer if
+        }
+
+        // Update timer.
+        ControlTimer += CONTROL_INTERVAL;
+    } // end of timer if
     // Clock Control
+
     if (millis() - ClkTimer >= CLOCK_TIME)
     {
         if (clockState == CLOCK_RUNNING)
             UpdateClock();
         Lcd_Update = 1; // Set flag to update the display
         ClkTimer += CLOCK_TIME;
-        LcdDriver.clear();
+        lcd.clear();
         SendClock(); // Place time
         // Set the cursor to indicate what is being set.
         switch (clockState)
         {
         case CLOCK_SET_HOURS:
-            LcdDriver.setCursor(0, 0);
+            printAngle = false;
+            lcd.setCursor(0, 0);
             break;
         case CLOCK_SET_MINUTES:
-            LcdDriver.setCursor(3, 0);
+            lcd.setCursor(3, 0);
             break;
         case CLOCK_SET_SECONDS:
-            LcdDriver.setCursor(6, 0);
+            lcd.setCursor(6, 0);
             break;
         case CLOCK_RUNNING:
-            LcdDriver.setCursor(0, 1);
+            lcd.setCursor(0, 1);
+            printAngle = true;
         }
-        LcdDriver.blink();
+        lcd.blink();
         Lcd_Update = 0; // Clear lcd update flag.
     }
 
     // Watch button and encoder to set clock
     if (ButtonNextState(digitalRead(4)) == 1) // Button pressed,
-        SettingClock(1, 0);                   // So update state.
-    else if ((encoderPosition - EncoderTracking) >= 4)
-    {                        // The encoder has moved by one detent
-        SettingClock(0, -1); // Indicate positive travel
-        LcdDriver.clear();
-        SendClock();          // Place time
-        EncoderTracking += 4; // and move tracking variable.
+    {
+        SettingClock(1, 0); // So update state.
     }
-    else if ((encoderPosition - EncoderTracking) <= -4)
-    {                        // The encoder has moved by one detent in the opposite direction
-        SettingClock(0, +1); // Indicate negative travel
-        LcdDriver.clear();
-        SendClock();          // Place time
-        EncoderTracking -= 4; // and Update Tracking accordingly
+    if (clockState != CLOCK_RUNNING)
+    {
+        if ((encoderPosition - EncoderTracking) >= 4)
+        {                       // The encoder has moved by one detent
+            SettingClock(0, 1); // Indicate positive travel
+            lcd.clear();
+            SendClock();          // Place time
+            EncoderTracking += 4; // and move tracking variable.
+        }
+        else if ((encoderPosition - EncoderTracking) <= -4)
+        {                        // The encoder has moved by one detent in the opposite direction
+            SettingClock(0, -1); // Indicate negative travel
+            lcd.clear();
+            SendClock();          // Place time
+            EncoderTracking -= 4; // and Update Tracking accordingly
+        }
     }
+
 } // end of loop.

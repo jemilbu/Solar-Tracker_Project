@@ -44,7 +44,7 @@ void UpdateClock()
 // Send Hours, Minutes and Seconds to a display.
 void SendClock()
 {
-    ClockLcdDriver.print(" "); // Position over by one.
+    //ClockLcdDriver.print(" "); // Position over by one.
     // Check if leading zero needs to be sent
     if (CLK_Hours < 10)
     {
