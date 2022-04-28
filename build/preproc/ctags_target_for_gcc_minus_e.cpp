@@ -1,24 +1,30 @@
+# 1 "c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\SolarTracker\\SolarTracker.ino"
+# 1 "c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\SolarTracker\\SolarTracker.ino"
 /* SolarTracker.ino
+
  * Authors: Jacob Milburn and Nathan Lauritsen
+
  * April 4, 2022
- */
 
+ */
+# 6 "c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\SolarTracker\\SolarTracker.ino"
 /* Goals:
- * - Display Clock and Solar tracker data (angle) at the same time 
- * - Clean up code
- */
 
+ * - Display Clock and Solar tracker data (angle) at the same time 
+
+ * - Clean up code
+
+ */
+# 11 "c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\SolarTracker\\SolarTracker.ino"
 //  Headers to include
-#include <LiquidCrystal.h>
-#include <Servo.h>
-#include "EncoderMonitor.h"
-#include "ClockBasics.h"
-#include "ButtonDebounce.h"
+# 13 "c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\SolarTracker\\SolarTracker.ino" 2
+# 14 "c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\SolarTracker\\SolarTracker.ino" 2
+# 15 "c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\SolarTracker\\SolarTracker.ino" 2
+# 16 "c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\SolarTracker\\SolarTracker.ino" 2
+# 17 "c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\SolarTracker\\SolarTracker.ino" 2
 
 //  Set up Global Variables
 int pos = 90;
-int limLow = 5;
-int limHigh = 175;
 int sens1 = 0;
 int sens2 = 1;
 int error = 5;
@@ -29,16 +35,16 @@ bool printAngle = true;
 
 //  Software Timer for control 2 Hz
 unsigned long ControlTimer;
-#define CONTROL_INTERVAL 500
+
 
 // Parameters of search algorithm
-#define LightOff 500
-#define LightTolerance 25
+
+
 
 // Timer to control Clock and Encoder.
-#define CLOCK_TIME 1000
-#define DOT_TIME 50
-#define ENCODER_INTERVAL 250
+
+
+
 unsigned long ClkTimer, TxTimer, EncoderTimer;
 unsigned long INTERVAL = 1000;
 
@@ -57,14 +63,14 @@ void SendClock()
         lcd.print("0");
     }
     lcd.print(CLK_Hours); // Then send hours
-    lcd.print(":");       // And separator
+    lcd.print(":"); // And separator
     // Check for leading zero on Minutes.
     if (CLK_Minutes < 10)
     {
         lcd.print("0");
     }
     lcd.print(CLK_Minutes); // Then send Minutes
-    lcd.print(":");         // And separator
+    lcd.print(":"); // And separator
     // Check for leading zero needed for Seconds.
     if (CLK_Seconds < 10)
     {
@@ -84,9 +90,9 @@ void setup()
     myservo.attach(servopin);
 
     // Set Pin types
-    pinMode(sens1, INPUT);
-    pinMode(sens2, INPUT);
-    pinMode(servopin, OUTPUT);
+    pinMode(sens1, 0x0);
+    pinMode(sens2, 0x0);
+    pinMode(servopin, 0x1);
 
     //  Write servo to starting position and wait for motion to complete
     myservo.write(pos);
@@ -115,7 +121,7 @@ void loop()
 {
     int Total, MidPoint;
 
-    if (millis() - ControlTimer >= CONTROL_INTERVAL) //  If specified interval has passed
+    if (millis() - ControlTimer >= 500) //  If specified interval has passed
     {
         // Read in light levels.
         Total = analogRead(sens1);
@@ -132,17 +138,17 @@ void loop()
         }
 
         // Check if there is enough light
-        if (Total < LightOff)
+        if (Total < 500)
         {
-            if (abs(Total - MidPoint) > LightTolerance)
+            if (((Total - MidPoint)>0?(Total - MidPoint):-(Total - MidPoint)) > 25)
             {
-                if (Total > 2 * MidPoint && pos <= limHigh)
+                if (Total > 2 * MidPoint && pos <= 177)
                 {
-                    pos += 5;
+                    pos += 3;
                 }
-                else if (Total < 2 * MidPoint && pos >= limLow)
+                else if (Total < 2 * MidPoint && pos >= 3)
                 {
-                    pos -= 5;
+                    pos -= 3;
                 }
                 else
                 {
@@ -201,48 +207,29 @@ void loop()
                     break;
                 }
             }
-            else // if during the night
+            else
             {
+                // if during the night
                 // rotate slowly to morning position and wait until day or until enough light
-                if (pos >= limLow)
+                if (pos >= 10)
                 {
-                    pos -= 5;
+                    pos -= 10;
                 }
             }
         }
-        int currPos = myservo.read();
-        if (abs(currPos - pos) > 5)
-        {
-            if (currPos > pos)
-            {
-                myservo.write(currPos - 5);
-            }
-            else if (currPos < pos)
-            {
-                myservo.write(currPos + 5);
-            }
-            else
-            {
-                myservo.write(pos);
-            }
-        }
-        else
-        {
-            myservo.write(pos);
-        }
 
         // Update timer.
-        ControlTimer += CONTROL_INTERVAL;
+        ControlTimer += 500;
     } // end of timer if
     // Clock Control
 
-    if (millis() - ClkTimer >= CLOCK_TIME)
+    if (millis() - ClkTimer >= 1000)
     {
         if (clockState == CLOCK_RUNNING)
         {
             UpdateClock();
         }
-        ClkTimer += CLOCK_TIME;
+        ClkTimer += 1000;
         lcd.clear();
         SendClock(); // Place time
         // Set the cursor to indicate what is being set.
@@ -273,17 +260,17 @@ void loop()
     if (clockState != CLOCK_RUNNING)
     {
         if ((encoderPosition - EncoderTracking) >= 4)
-        {                       // The encoder has moved by one detent
+        { // The encoder has moved by one detent
             SettingClock(0, 1); // Indicate positive travel
             lcd.clear();
-            SendClock();          // Place time
+            SendClock(); // Place time
             EncoderTracking += 4; // and move tracking variable.
         }
         else if ((encoderPosition - EncoderTracking) <= -4)
-        {                        // The encoder has moved by one detent in the opposite direction
+        { // The encoder has moved by one detent in the opposite direction
             SettingClock(0, -1); // Indicate negative travel
             lcd.clear();
-            SendClock();          // Place time
+            SendClock(); // Place time
             EncoderTracking -= 4; // and Update Tracking accordingly
         }
     }

@@ -1,0 +1,62 @@
+[
+  {
+    "Sourcefile": "",
+    "Include": "",
+    "Includepath": "C:\\arduino-1.8.9\\hardware\\arduino\\avr\\cores\\arduino"
+  },
+  {
+    "Sourcefile": "",
+    "Include": "",
+    "Includepath": "C:\\arduino-1.8.9\\hardware\\arduino\\avr\\variants\\eightanaloginputs"
+  },
+  {
+    "Sourcefile": "c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\build\\sketch\\SolarTracker.ino.cpp",
+    "Include": "LiquidCrystal.h",
+    "Includepath": "C:\\arduino-1.8.9\\libraries\\LiquidCrystal\\src"
+  },
+  {
+    "Sourcefile": "c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\build\\sketch\\SolarTracker.ino.cpp",
+    "Include": "Servo.h",
+    "Includepath": "C:\\arduino-1.8.9\\libraries\\Servo\\src"
+  },
+  {
+    "Sourcefile": "c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\build\\sketch\\SolarTracker.ino.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\arduino-1.8.9\\libraries\\LiquidCrystal\\src\\LiquidCrystal.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\arduino-1.8.9\\libraries\\Servo\\src\\avr\\Servo.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\arduino-1.8.9\\libraries\\Servo\\src\\megaavr\\Servo.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\arduino-1.8.9\\libraries\\Servo\\src\\nrf52\\Servo.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\arduino-1.8.9\\libraries\\Servo\\src\\sam\\Servo.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\arduino-1.8.9\\libraries\\Servo\\src\\samd\\Servo.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\arduino-1.8.9\\libraries\\Servo\\src\\stm32f4\\Servo.cpp",
+    "Include": "",
+    "Includepath": ""
+  }
+]

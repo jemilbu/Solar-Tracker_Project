@@ -1,0 +1,11 @@
+{
+  "additionalFiles": "\\ButtonDebounce.h,\\ClockBasics.h,\\EncoderMonitor.h,\\PID.h",
+  "builtInLibrariesFolders": "C:\\arduino-1.8.9\\libraries",
+  "customBuildProperties": "build.path=c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\build,build.warn_data_percentage=75,runtime.tools.avr-gcc.path=C:\\arduino-1.8.9\\hardware\\tools\\avr,runtime.tools.avr-gcc-5.4.0-atmel3.6.1-arduino2.path=C:\\arduino-1.8.9\\hardware\\tools\\avr,runtime.tools.arduinoOTA.path=C:\\arduino-1.8.9\\hardware\\tools\\avr,runtime.tools.arduinoOTA-1.2.1.path=C:\\arduino-1.8.9\\hardware\\tools\\avr,runtime.tools.avrdude.path=C:\\arduino-1.8.9\\hardware\\tools\\avr,runtime.tools.avrdude-6.3.0-arduino14.path=C:\\arduino-1.8.9\\hardware\\tools\\avr",
+  "fqbn": "arduino:avr:nano:cpu=atmega328",
+  "hardwareFolders": "C:\\arduino-1.8.9\\hardware,C:\\Users\\Owner\\AppData\\Local\\Arduino15\\packages",
+  "otherLibrariesFolders": "C:\\Users\\Owner\\OneDrive - Kansas State University\\Documents\\Arduino\\libraries",
+  "runtime.ide.version": "10809",
+  "sketchLocation": "c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\SolarTracker\\SolarTracker.ino",
+  "toolsFolders": "C:\\arduino-1.8.9\\tools-builder,C:\\arduino-1.8.9\\hardware\\tools\\avr,C:\\Users\\Owner\\AppData\\Local\\Arduino15\\packages"
+}

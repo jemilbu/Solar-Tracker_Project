@@ -1,3 +1,6 @@
+#include <Arduino.h>
+#line 1 "c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\SolarTracker\\SolarTracker.ino"
+#line 1 "c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\SolarTracker\\SolarTracker.ino"
 /* SolarTracker.ino
  * Authors: Jacob Milburn and Nathan Lauritsen
  * April 4, 2022
@@ -17,8 +20,6 @@
 
 //  Set up Global Variables
 int pos = 90;
-int limLow = 5;
-int limHigh = 175;
 int sens1 = 0;
 int sens2 = 1;
 int error = 5;
@@ -49,6 +50,13 @@ LiquidCrystal lcd(A5, A4, 5, 6, 7, 8);
 Servo myservo;
 
 // Send Hours, Minutes and Seconds to a display.
+#line 50 "c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\SolarTracker\\SolarTracker.ino"
+void SendClock();
+#line 75 "c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\SolarTracker\\SolarTracker.ino"
+void setup();
+#line 112 "c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\SolarTracker\\SolarTracker.ino"
+void loop();
+#line 50 "c:\\Users\\Owner\\Pictures\\ECE_241\\Project\\SolarTracker\\SolarTracker.ino"
 void SendClock()
 {
     // Check if leading zero needs to be sent
@@ -136,13 +144,13 @@ void loop()
         {
             if (abs(Total - MidPoint) > LightTolerance)
             {
-                if (Total > 2 * MidPoint && pos <= limHigh)
+                if (Total > 2 * MidPoint && pos <= 177)
                 {
-                    pos += 5;
+                    pos += 3;
                 }
-                else if (Total < 2 * MidPoint && pos >= limLow)
+                else if (Total < 2 * MidPoint && pos >= 3)
                 {
-                    pos -= 5;
+                    pos -= 3;
                 }
                 else
                 {
@@ -201,34 +209,15 @@ void loop()
                     break;
                 }
             }
-            else // if during the night
-            {
-                // rotate slowly to morning position and wait until day or until enough light
-                if (pos >= limLow)
-                {
-                    pos -= 5;
-                }
-            }
-        }
-        int currPos = myservo.read();
-        if (abs(currPos - pos) > 5)
-        {
-            if (currPos > pos)
-            {
-                myservo.write(currPos - 5);
-            }
-            else if (currPos < pos)
-            {
-                myservo.write(currPos + 5);
-            }
             else
             {
-                myservo.write(pos);
+                // if during the night
+                // rotate slowly to morning position and wait until day or until enough light
+                if (pos >= 10)
+                {
+                    pos -= 10;
+                }
             }
-        }
-        else
-        {
-            myservo.write(pos);
         }
 
         // Update timer.
